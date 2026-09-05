@@ -1,5 +1,5 @@
 {
-  "listen_addr": "3000",
+  "listen_addr": ":3000",
 
   "backends": [
     { "name": "backend-1", "url": "http://10.1.75.79:3206" },
@@ -7,7 +7,7 @@
     { "name": "backend-3", "url": "http://10.1.75.79:3208" }
   ],
 
-  "health_check_path": "/health",
+  "health_check_path": "/feed",
   "health_check_interval_ms": 2000,
   "health_check_timeout_ms": 1500,
   "unhealthy_threshold": 3,
@@ -20,5 +20,5 @@
   "request_timeout_ms": 4000,
   "max_retries": 2,
 
-  "admin_token": "change-me-to-a-random-string"
+  "admin_token": "k3x9P2vQ8mZ7rL4tY6wN1sB5"
 }
