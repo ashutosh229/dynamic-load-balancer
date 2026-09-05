@@ -1,0 +1,19 @@
+[Unit]
+Description=Dynamic Load Balancer for Group Chat App
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/lb
+ExecStart=/opt/lb/lb -config /opt/lb/config.json
+Restart=always
+RestartSec=2
+User=lbrunner
+Group=lbrunner
+LimitNOFILE=65536
+# Keep stdout/stderr in the journal for debugging with: journalctl -u lb -f
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
