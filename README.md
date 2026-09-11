@@ -63,7 +63,7 @@ session-based) routing safe here.
      microseconds, not on a health-check tick.
    - `ewmaLatencyMs` is an exponentially-weighted moving average of that
      backend's real response times (`α = 0.3` by default), so a backend that
-     is *slow* even with few connections still gets penalized.
+     is _slow_ even with few connections still gets penalized.
 3. A backend is **overloaded** if `activeRequests > max_active_requests` OR
    `ewmaLatencyMs > max_latency_ms` (the two tunable thresholds). Overloaded
    backends are skipped in favor of any non-overloaded healthy backend.
@@ -72,7 +72,7 @@ session-based) routing safe here.
 5. The chosen backend list is fully ordered by score, so if the top pick's
    request fails mid-flight (timeout, connection refused, 5xx), the LB
    automatically retries against the next-best backend (`max_retries`,
-   default 2) before giving up. This is safe specifically *because* your
+   default 2) before giving up. This is safe specifically _because_ your
    backend de-duplicates by message ID (see §5).
 
 This means traffic share shifts continuously and automatically toward
@@ -97,11 +97,11 @@ treated as "process is alive"; 5xx or connection failure counts as down.
 ## 4. Required routes (exposed by the LB, exactly as specified)
 
 | Route      | Method | Behavior                                                        |
-|------------|--------|-------------------------------------------------------------------|
-| `/message` | POST   | Forwarded to the best-scoring healthy backend, with retry.         |
-| `/feed`    | GET    | Forwarded to the best-scoring healthy backend, with retry.         |
-| `/health`  | GET    | LB's own liveness: 200 if ≥1 backend healthy, else 503.            |
-| `/stats`   | GET    | JSON dump of per-backend health/load, for your own tuning/demo.    |
+| ---------- | ------ | --------------------------------------------------------------- |
+| `/message` | POST   | Forwarded to the best-scoring healthy backend, with retry.      |
+| `/feed`    | GET    | Forwarded to the best-scoring healthy backend, with retry.      |
+| `/health`  | GET    | LB's own liveness: 200 if ≥1 backend healthy, else 503.         |
+| `/stats`   | GET    | JSON dump of per-backend health/load, for your own tuning/demo. |
 
 `/stats` is bearer-token protected if you set `admin_token` in
 `config.json`; leave it blank to disable auth (fine for a lab demo).
@@ -122,8 +122,8 @@ assignment's correctness requirement to hold, the backend team needs:
      — workable for a lab, but a real DB server is more robust under
      concurrent writes from 3 processes.
 2. **A unique, client-generated message ID** on every message (e.g. a UUID
-   the client generates once per message, so retries of the *same* logical
-   message reuse the *same* ID). Schema:
+   the client generates once per message, so retries of the _same_ logical
+   message reuse the _same_ ID). Schema:
    ```sql
    CREATE TABLE messages (
      message_id  TEXT PRIMARY KEY,      -- or UUID type in Postgres
@@ -141,8 +141,7 @@ assignment's correctness requirement to hold, the backend team needs:
    ```
    (SQLite: `INSERT OR IGNORE INTO messages ...`)
 
-This matters here specifically because the LB's own retry logic (§2, point
-5) will occasionally replay a POST against a second backend if the first
+This matters here specifically because the LB's own retry logic (§2, point 5) will occasionally replay a POST against a second backend if the first
 one times out right at the edge of success — without the `UNIQUE` +
 `ON CONFLICT DO NOTHING` pattern, that replay becomes a visible duplicate
 message in `/feed`.
@@ -209,11 +208,13 @@ teammates) and run this load balancer on your 4th system.
 
 If your allotted systems accept Docker-in-Docker or `docker compose`, use
 the included `Dockerfile` instead of systemd:
+
 ```bash
 docker build -t chat-lb .
 docker run -d --restart unless-stopped -p 8000:8080 \
   -v $(pwd)/config.json:/etc/lb/config.json:ro --name chat-lb chat-lb
 ```
+
 (map your chosen host app port to the container's `8080`, then apply the
 same global-port formula to the host port you picked).
 
@@ -229,7 +230,7 @@ system's actual capacity, which you should measure, not guess:
    concurrency: 1, 5, 10, 20, 40, 80 concurrent clients hitting `/message`.
 2. **Plot latency vs. concurrency.** Watch `/stats` (or your backend's own
    logs) for where p50/p95 latency starts climbing steeply rather than
-   staying flat — that's the *knee point* where the backend transitions
+   staying flat — that's the _knee point_ where the backend transitions
    from "handling load fine" to "queueing/degrading."
 3. **Set `max_active_requests` a bit below the knee**, e.g. if latency stays
    flat up to ~25 concurrent in-flight requests and then spikes, set
