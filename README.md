@@ -195,13 +195,14 @@ teammates) and run this load balancer on your 4th system.
    ```
 6. **Verify**:
    ```bash
-   curl http://10.1.75.79:<lb_global_port>/health
-   curl -X POST http://10.1.75.79:<lb_global_port>/message \
-        -d '{"client-name":"alice","msg":"hello"}'
-   curl http://10.1.75.79:<lb_global_port>/feed
-   curl http://10.1.75.79:<lb_global_port>/stats
+   curl http://10.1.75.79:5205/health
+curl -X POST "http://10.1.75.79:5205/message" \
+  -H "Content-Type: application/json" \
+  -d '{"client-name":"alice","msg":"hello"}'
+   curl http://10.1.75.79:5205/feed
+   curl http://10.1.75.79:5205/stats
    ```
-7. **Submit** `http://10.1.75.79:<lb_global_port>` as your Load Balancer
+7. **Submit** `http://10.1.75.79:5205` as your Load Balancer
    URL.
 
 ### Container-native alternative
