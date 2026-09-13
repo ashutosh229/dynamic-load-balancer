@@ -73,6 +73,15 @@ func LoadConfig(path string) (Config, error) {
 	if len(raw.Backends) == 0 {
 		return cfg, fmt.Errorf("config must declare at least one backend")
 	}
+
+	// Prefer the ADMIN_TOKEN env var over a value baked into config.json,
+	// so the token doesn't need to live in a file that gets committed or
+	// shared alongside the rest of the config. If the env var is unset,
+	// fall back to whatever (if anything) is in config.json.
+	if envToken := os.Getenv("ADMIN_TOKEN"); envToken != "" {
+		raw.AdminToken = envToken
+	}
+
 	return raw, nil
 }
 
