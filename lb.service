@@ -5,6 +5,11 @@ After=network.target
 [Service]
 Type=simple
 WorkingDirectory=/opt/lb
+# Set the real token here (or better, in an EnvironmentFile= that is
+# chmod 600 and NOT checked into version control) rather than in
+# config.json, so it never ends up committed alongside the rest of the
+# LB config.
+Environment=ADMIN_TOKEN=k3x9P2vQ8mZ7rL4tY6wN1sB5
 ExecStart=/opt/lb/lb -config /opt/lb/config.json
 Restart=always
 RestartSec=2
